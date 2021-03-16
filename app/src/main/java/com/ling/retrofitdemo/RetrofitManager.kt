@@ -1,5 +1,6 @@
 package com.ling.retrofitdemo
 
+import android.util.Log
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -15,15 +16,21 @@ import java.util.concurrent.TimeUnit
  */
 class RetrofitManager {
     lateinit var retrofit: Retrofit
+    private val BASE_URL = "http://www.weather.com.cn/data/sk/"
 
-    private val BASE_URL = ""
+    constructor() {
+        Log.i("haodadaurl", "constructor()")
+        initRetrofit()
+    }
 
     object Hodler {
-        val instance: RetrofitManager = RetrofitManager()
+        val instance = RetrofitManager()
     }
 
     companion object {
+
         fun getInstance(): RetrofitManager {
+            Log.i("haodadaurl", "getInstance() Hodler.instance == " + Hodler.instance)
             return Hodler.instance;
         }
     }
@@ -31,7 +38,8 @@ class RetrofitManager {
     /**
      * 初始化  Retrofit
      */
-    fun initRetrofit() {
+    private fun initRetrofit() {
+        Log.i("haodadaurl", "initRetrofit()")
         // OKHttp客户端
         val httpBuilder = OkHttpClient.Builder()
         // 各种参数配置
@@ -41,6 +49,7 @@ class RetrofitManager {
                 .readTimeout(10000, TimeUnit.SECONDS)
                 .connectTimeout(10000, TimeUnit.SECONDS)
                 .writeTimeout(10000, TimeUnit.SECONDS)
+                .addInterceptor(MyInterceptor())
                 .build()
 
         retrofit = Retrofit.Builder()
